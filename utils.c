@@ -1,7 +1,7 @@
-#include <./progConc.h>
+#include "./progConc.h"
 
-void initThreads(pthread_t **threadArray, int threadPosition, void *threadFunction, void* args) {
-    if(pthread_create(*threadArray[threadPosition], NULL, threadFunction, args)) {
+void initThread(pthread_t *threadArray, int threadPosition, void *threadFunction, void* args) {
+    if(pthread_create(&threadArray[threadPosition], NULL, threadFunction, args)) {
         puts("\033[31mNão foi possível instaciar uma nova thread [initThreads L3]");
         exit(-13);
     }
