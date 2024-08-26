@@ -1,20 +1,19 @@
 #include "./progConc.h"
 
-int *generateRandNumberArray(int qtt, char* numberType) {
+void *generateRandNumberArray(int qtt, char* numberType) {
     int cont;
     void *numberArray;
 
     srand(time(0));
 
     if(!strcmp(numberType, "float")) {
-        puts("entrou");
         if((numberArray = malloc(sizeof(float) * qtt)) == NULL) {
             puts("\033[31mNão foi possível alocar o vetor de float [generateIntArray L8]\033[m");
             exit (-18);
         }
 
         for(cont = 0 ; cont < qtt ; cont += 1) {
-            ((float *)numberArray)[cont] = (float)rand() / RAND_MAX ;
+            ((float *)numberArray)[cont] = (float) rand() / (float)(qtt / 2) ;
         }
     }
     else if(!strcmp(numberType, "int")) {
@@ -24,7 +23,7 @@ int *generateRandNumberArray(int qtt, char* numberType) {
         }
 
         for(cont = 0 ; cont < qtt ; cont += 1) {
-            ((int *)numberArray)[cont] = (rand() * 2) / qtt;
+            ((int *)numberArray)[cont] = rand() / (qtt / 2);
         }
     }
     else if(!strcmp(numberType, "double")) {
@@ -34,7 +33,7 @@ int *generateRandNumberArray(int qtt, char* numberType) {
         }
 
         for(cont = 0 ; cont < qtt ; cont += 1) {
-            ((double *)numberArray)[cont] = (rand() * 2) / qtt;
+            ((double *)numberArray)[cont] = (double)rand() / (double)(qtt / 2);
         }
     }
     else {

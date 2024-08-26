@@ -10,7 +10,7 @@
 
 /*----------------------------------------------------------------------------*/
 
-int *generateRandNumberArray(int qtt, char* numberType);
+void *generateRandNumberArray(int qtt, char* numberType);
 
 void initThread(pthread_t *threadLocal, void *threadFunction(void *arg), void* args);
 pthread_t *initThreadArray(int size_arr);
