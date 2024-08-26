@@ -13,7 +13,7 @@ void *generateRandNumberArray(int qtt, char* numberType) {
         }
 
         for(cont = 0 ; cont < qtt ; cont += 1) {
-            ((float *)numberArray)[cont] = (float) rand() / (float)(qtt / 2) ;
+            ((float *)numberArray)[cont] = ((float)rand() / (float)RAND_MAX) * 100000;
         }
     }
     else if(!strcmp(numberType, "int")) {
@@ -23,7 +23,7 @@ void *generateRandNumberArray(int qtt, char* numberType) {
         }
 
         for(cont = 0 ; cont < qtt ; cont += 1) {
-            ((int *)numberArray)[cont] = rand() / (qtt / 2);
+            ((int *)numberArray)[cont] = (rand() / RAND_MAX) * 100000;
         }
     }
     else if(!strcmp(numberType, "double")) {
@@ -33,7 +33,7 @@ void *generateRandNumberArray(int qtt, char* numberType) {
         }
 
         for(cont = 0 ; cont < qtt ; cont += 1) {
-            ((double *)numberArray)[cont] = (double)rand() / (double)(qtt / 2);
+            ((double *)numberArray)[cont] = ((double)rand() / (double)RAND_MAX) * 100000;
         }
     }
     else {
@@ -64,4 +64,17 @@ pthread_t *initThreadArray(int size_arr) {
     }
 
     return threads;
+}
+
+/*----------------------------------------------------------------------------*/
+
+void *mallocMem(size_t size) {
+    void *pointer;
+
+    if((pointer = malloc(size)) == NULL) {
+        puts("\033[31mNão foi possível alocar o espaço de memória\033[m");
+        exit(-45);
+    }
+
+    return pointer;
 }
