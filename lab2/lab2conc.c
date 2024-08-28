@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
             printf("--ERRO: pthread_join() da thread %d\n", retVal->threadId); 
         }
 
-        prodVetConc = retVal->returnValue;
+        prodVetConc += retVal->returnValue;
         free(retVal);
     }
 
@@ -108,4 +108,6 @@ void *calculateProdVet(void *arg) {
 
     free(arg);
     pthread_exit(retVal);
+
+    return NULL;
 }
