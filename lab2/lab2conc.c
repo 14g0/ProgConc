@@ -20,14 +20,14 @@ typedef struct prodVetArgs {
 
 typedef struct threadRetVal {
     int threadId;
-    long double returnValue;
+    double returnValue;
 } threadRetVal;
 
 /*----------------------------------------------------------------------------*/
 
 int main(int argc, char **argv) {
     int cont, T, N, div, mod;
-    long double prodVetSeq, prodVetConc = 0, variacao;
+    double prodVetSeq, prodVetConc = 0, variacao;
     float *vetor1, *vetor2;
     prodVetArgs *threadArg;
     threadRetVal *retVal;
@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
     vetor2 = mallocMem(N*sizeof(float));
     fread(vetor2, sizeof(float), N, arquivo);
     
-    fread(&prodVetSeq, sizeof(long double), 1, arquivo);
+    fread(&prodVetSeq, sizeof(double), 1, arquivo);
 
     if(T > N) T = N;
     div = N / T;

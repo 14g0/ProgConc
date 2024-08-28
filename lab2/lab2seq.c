@@ -9,7 +9,7 @@
 
 int main(int argc, char **argv) {
     float *vetor1, *vetor2;
-    long double prodVet;
+    double prodVet;
     FILE *arquivo;
     int cont, N;
 
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     fwrite(&N, sizeof(int), 1, arquivo);
     fwrite(vetor1, sizeof(float), N, arquivo);
     fwrite(vetor2, sizeof(float), N, arquivo);
-    fwrite(&prodVet, sizeof(long double), 1, arquivo);
+    fwrite(&prodVet, sizeof(double), 1, arquivo);
 
     if(fclose(arquivo)) {
         puts("\033[31mErro ao fechar o arquivo\033[m");

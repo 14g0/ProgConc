@@ -1,0 +1,6 @@
+Tendo executado os programas diversas vezes, com tamanhos diferentes dos arrays
+de float, não consegui achar um caso dentro dos limites da minha máquina onde a
+variação relativa tenha sido maior que 0. Tendo isso em mente, acredito que apenas
+para vetores de tamanhos astronômicos, ou com números próximos de estourar o tamanho
+do float da máquina, os erros comecem a se propagar de maneira significativa para
+que o erro apresente uma discrepância entre as somas concorrente e sequencial.
