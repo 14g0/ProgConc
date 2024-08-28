@@ -4,8 +4,6 @@ void *generateRandNumberArray(int qtt, char* numberType) {
     int cont;
     void *numberArray;
 
-    srand(time(0));
-
     if(!strcmp(numberType, "float")) {
         if((numberArray = malloc(sizeof(float) * qtt)) == NULL) {
             puts("\033[31mNão foi possível alocar o vetor de float [generateIntArray L8]\033[m");
@@ -13,7 +11,7 @@ void *generateRandNumberArray(int qtt, char* numberType) {
         }
 
         for(cont = 0 ; cont < qtt ; cont += 1) {
-            ((float *)numberArray)[cont] = ((float)rand() / (float)RAND_MAX) * 100000;
+            ((float *)numberArray)[cont] = ((float)rand() / (float)RAND_MAX) * 1000;
         }
     }
     else if(!strcmp(numberType, "int")) {
@@ -33,7 +31,7 @@ void *generateRandNumberArray(int qtt, char* numberType) {
         }
 
         for(cont = 0 ; cont < qtt ; cont += 1) {
-            ((double *)numberArray)[cont] = ((double)rand() / (double)RAND_MAX) * 100000;
+            ((double *)numberArray)[cont] = ((double)rand() / (double)RAND_MAX) * 1000;
         }
     }
     else {
