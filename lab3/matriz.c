@@ -5,7 +5,7 @@
 #include "../progConc.h"
 
 int main(int argc, char **argv) {
-    int cont, cont2, N, M;
+    int N, M;
     FILE *arquivo;
     float *vetor;
 
@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     N = atoi(argv[1]);
     M = atoi(argv[2]);
 
-    vetor = generateRandNumberArray(N * M, "float");
+    vetor = generateRandNumberArray(N * M, "float", 10);
 
     fwrite(&N, sizeof(int), 1, arquivo);
     fwrite(&M, sizeof(int), 1, arquivo);
@@ -36,14 +36,6 @@ int main(int argc, char **argv) {
     if(fclose(arquivo)) {
         puts("\033[31mErro ao fechar o arquivo\033[m");
         exit(-3);
-    }
-
-    printf("Linhas: %d\nColunas: %d\n", N, M);
-    for(cont = 0 ; cont < N ; cont += 1) {
-        for(cont2 = 0 ; cont2 < M ; cont2 += 1) {
-            printf("%f ", vetor[(cont * M) + cont2]);
-        }
-        puts("");
     }
 
     return 0;

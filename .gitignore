@@ -1,3 +1,5 @@
 *.exe
 *.bin
+*.o
+*.csv
 cods-lab3/
