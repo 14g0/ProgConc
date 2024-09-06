@@ -76,3 +76,18 @@ void *mallocMem(size_t size) {
 
     return pointer;
 }
+
+/*----------------------------------------------------------------------------*/
+
+void printMatriz(matriz *matriz) {
+    int cont, cont2;
+
+    printf("Linhas: %d\nColunas: %d\n", matriz->linhas, matriz->colunas);
+    for(cont = 0 ; cont < matriz->linhas ; cont += 1) {
+        for(cont2 = 0 ; cont2 < matriz->colunas ; cont2 += 1) {
+            printf("%f ", matriz->vetor[(cont * matriz->colunas) + cont2]);
+        }
+        puts("");
+    }
+    puts("");
+}

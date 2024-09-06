@@ -7,6 +7,13 @@
 
 /*----------------------------------------------------------------------------*/
 
+typedef struct matriz {
+    int linhas, colunas;
+    float *vetor;
+} matriz;
+
+/*----------------------------------------------------------------------------*/
+
 #ifndef _CLOCK_TIMER_H
 #define _CLOCK_TIMER_H
 
@@ -28,5 +35,7 @@ void initThread(pthread_t *threadLocal, void *threadFunction(void *arg), void* a
 pthread_t *initThreadArray(int size_arr);
 
 void *mallocMem(size_t size);
+
+void printMatriz(matriz *matriz);
 
 /*----------------------------------------------------------------------------*/

@@ -2,14 +2,6 @@
 
 /*----------------------------------------------------------------------------*/
 
-typedef struct matriz {
-    int linhas, colunas;
-    float *vetor;
-} matriz;
-
-/*----------------------------------------------------------------------------*/
-
-void printMatriz(matriz *matriz);
 matriz multiplicarMatrizes(matriz mat1, matriz mat2);
 
 /*----------------------------------------------------------------------------*/
@@ -77,7 +69,7 @@ int main(int argc, char **argv) {
 
     GET_TIME(finalizacao);
     
-    fprintf(registro, "%d,0,%f,%f,%f,%f",
+    fprintf(registro, "%d,0,%f,%f,%f,%f\n",
         matrizSaida.linhas,
         inicializacao - inicio,
         execucao - inicializacao,
@@ -94,19 +86,6 @@ int main(int argc, char **argv) {
 }
 
 /*----------------------------------------------------------------------------*/
-
-void printMatriz(matriz *matriz) {
-    int cont, cont2;
-
-    printf("Linhas: %d\nColunas: %d\n", matriz->linhas, matriz->colunas);
-    for(cont = 0 ; cont < matriz->linhas ; cont += 1) {
-        for(cont2 = 0 ; cont2 < matriz->colunas ; cont2 += 1) {
-            printf("%f ", matriz->vetor[(cont * matriz->colunas) + cont2]);
-        }
-        puts("");
-    }
-    puts("");
-}
 
 matriz multiplicarMatrizes(matriz mat1, matriz mat2) {
     matriz matResultado;
