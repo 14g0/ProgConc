@@ -1,5 +1,6 @@
 *.exe
 *.bin
 *.o
-*.csv
 cods-lab3/
+cods-lab4/
+cods-lab5/
