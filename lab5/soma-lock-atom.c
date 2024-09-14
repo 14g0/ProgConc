@@ -7,30 +7,48 @@
 #include <pthread.h>
 
 long int soma = 0;
+int cont = 0;
 pthread_mutex_t mutex;
-pthread_cond_t cond;
+pthread_cond_t ext, execTarefa;
 
 void *ExecutaTarefa(void *arg) {
+    int i;
     long int id = (long int)arg;
+
     printf("Thread : %ld esta executando...\n", id);
 
-    for (int i = 0; i < 100000; i++) {
-        if(soma % 10) pthread_cond_wait(&cond, &mutex);
-
+    for (i = 0; i < 100000; i++) {
         pthread_mutex_lock(&mutex);
+        
+        if(!(soma % 10) && (cont < 20)) {
+            puts("BLOCK execT");
+            pthread_cond_wait(&execTarefa, &mutex);
+            pthread_cond_signal(&ext);
+            pthread_mutex_lock(&mutex);
+        }
         soma++;
-        pthread_mutexF_unlock(&mutex);
+
+        pthread_mutex_unlock(&mutex);
     }
     printf("Thread : %ld terminou!\n", id);
     pthread_exit(NULL);
 }
 
 void *extra(void *args) {
+
     printf("Extra : esta executando...\n");
-    for (int i = 0; i < 10000; i++) {
-        if (!(soma % 10)) printf("soma = %ld \n", soma);
-        pthread_cond_signal(&cond);
+
+    for (cont = 0 ; cont < 20 ; cont += 1) {
+        pthread_mutex_lock(&mutex);
+
+        puts("entrou");
+        printf("soma = %ld \n", soma);
+
+        pthread_cond_broadcast(&execTarefa);
+        puts("BLOCK ext");
+        pthread_cond_wait(&ext, &mutex);
     }
+
     printf("Extra : terminou!\n");
     pthread_exit(NULL);
 }
