@@ -7,7 +7,7 @@
 #include <pthread.h>
 
 long int soma = 0;
-int cont = 0;
+int cont = 0, QtdThreads, threadsEsperando;
 pthread_mutex_t mutex;
 pthread_cond_t ext, execTarefa;
 
@@ -19,13 +19,17 @@ void *ExecutaTarefa(void *arg) {
 
     for (i = 0; i < 100000; i++) {
         pthread_mutex_lock(&mutex);
-        
-        if(!(soma % 10) && (cont < 20)) {
-            puts("BLOCK execT");
-            pthread_cond_wait(&execTarefa, &mutex);
+
+        if((cont > 19) && (threadsEsperando > 0)) pthread_cond_broadcast(&execTarefa);
+        else if((!(soma % 10) && (cont < 20)) || (threadsEsperando > 0)) {
+            threadsEsperando += 1;
             pthread_cond_signal(&ext);
-            pthread_mutex_lock(&mutex);
+            printf("BLOCK execTarefa: %ld\n", id);
+            printf("SOMA: %ld\n", soma);
+            pthread_cond_wait(&execTarefa, &mutex);
         }
+        else if(cont < 20) puts("TÁ LIBERADA");
+
         soma++;
 
         pthread_mutex_unlock(&mutex);
@@ -35,21 +39,22 @@ void *ExecutaTarefa(void *arg) {
 }
 
 void *extra(void *args) {
-
-    printf("Extra : esta executando...\n");
+    puts("Extra : esta executando...");
 
     for (cont = 0 ; cont < 20 ; cont += 1) {
         pthread_mutex_lock(&mutex);
 
-        puts("entrou");
+        while(threadsEsperando < QtdThreads) pthread_cond_wait(&ext, &mutex);
+
         printf("soma = %ld \n", soma);
 
+        threadsEsperando = 0;
         pthread_cond_broadcast(&execTarefa);
-        puts("BLOCK ext");
-        pthread_cond_wait(&ext, &mutex);
+
+        pthread_mutex_unlock(&mutex);
     }
 
-    printf("Extra : terminou!\n");
+    puts("Extra : terminou!");
     pthread_exit(NULL);
 }
 
@@ -62,6 +67,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     nthreads = atoi(argv[1]);
+    QtdThreads = nthreads;
 
     tid = (pthread_t *)malloc(sizeof(pthread_t) * (nthreads + 1));
     if (tid == NULL) {
