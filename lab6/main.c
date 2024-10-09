@@ -11,8 +11,12 @@
 /*----------------------------------------------------------------------------*/
 
 void *tarefa(void *arg);
-void lockLeitura(void);
-void lockEscrita(void);
+
+void habilitarLeitura(void);
+void finalizarLeitura(void);
+
+void habilitarEscrita(void);
+void finalizarEscrita(void);
 
 /*----------------------------------------------------------------------------*/
 
@@ -20,7 +24,7 @@ pthread_mutex_t mutex;
 pthread_cond_t condLeitura, condEscrita;
 
 struct list_node_s *head_p = NULL;
-int nthreads;
+int nthreads, leitura = 0, escrita = 0, escritaAguardando = 0;
 
 /*----------------------------------------------------------------------------*/
 
@@ -28,6 +32,8 @@ int main(int argc, char *argv[]) {
     pthread_t *threadIdArray;
     double ini, fim, delta;
     long int cont;
+
+    srand(time(NULL));
 
     if(argc < 2) {
         printf("Digite: %s <numero de threads>\n", argv[0]);
@@ -48,7 +54,7 @@ int main(int argc, char *argv[]) {
     pthread_cond_init(&condEscrita, NULL);
 
     for(cont = 0; cont < nthreads; cont++) {
-        if(pthread_create(threadIdArray + cont, NULL, tarefa, (void *)cont)) {
+        if(pthread_create(threadIdArray + cont, NULL, tarefa, (void *)&cont)) {
             puts("--ERRO: pthread_create()\n");
             return 3;
         }
@@ -63,7 +69,7 @@ int main(int argc, char *argv[]) {
 
     GET_TIME(fim);
     delta = fim - ini;
-    printf("Tempo: %lf\n", delta);
+    printf("Tempo: %f\n", delta);
 
     pthread_mutex_destroy(&mutex);
     pthread_cond_destroy(&condLeitura);
@@ -71,70 +77,94 @@ int main(int argc, char *argv[]) {
     free(threadIdArray);
     Free_list(&head_p);
 
-    return 0;
+    return 1;
 }
 
 /*----------------------------------------------------------------------------*/
 
 void *tarefa(void *arg) {
-    long int id = (long int)arg, cont;
-    int op;
-    int in, out, read;
+    long int id = *(long int *)arg, cont;
+    int op, in, out, read;
     in = out = read = 0;
 
     for(cont = id; cont < QTDE_OPS; cont += nthreads) {
         op = rand() % 100;
         if(op < 50) {
-            pthread_rwlock_rdlock(&rwlock); /* lock de LEITURA */
+            habilitarLeitura(); /* lock de LEITURA */
             Member(cont % MAX_VALUE, head_p);  /* Ignore return value */
-            pthread_rwlock_unlock(&rwlock);
+            finalizarLeitura();
             read++;
         }
         else if(50 <= op && op < 75) {
-            pthread_rwlock_wrlock(&rwlock); /* lock de ESCRITA */
+            habilitarEscrita(); /* lock de ESCRITA */
             Insert(cont % MAX_VALUE, &head_p); /* Ignore return value */
-            pthread_rwlock_unlock(&rwlock);
+            finalizarEscrita();
             in++;
         }
         else if(op >= 75) {
-            pthread_rwlock_wrlock(&rwlock); /* lock de ESCRITA */
+            habilitarEscrita(); /* lock de ESCRITA */
             Delete(cont % MAX_VALUE, &head_p); /* Ignore return value */
-            pthread_rwlock_unlock(&rwlock);
+            finalizarEscrita();
             out++;
         }
     }
     /* registra a qtde de operacoes realizadas por tipo */
     printf("Thread %ld: in=%d out=%d read=%d\n", id, in, out, read);
     pthread_exit(NULL);
+
+    return NULL;
 }
 
-void lockLeitura(long int operationNumber) {
-    /*
-        Se chegar uma nova
-
-        - Existe operação de escrita -> espera acabar para criar uma nova
-        - Existe operação de leitura -> executa mesmo assim
-    */
-
+void habilitarLeitura(void) {
     pthread_mutex_lock(&mutex);
-    while(escr > 0) {
+
+    while(escrita > 0 || escritaAguardando > 0) {
+        puts("\033[33mLeitura bloqueada, aguardando término da escrita ou uma nova escrita que está esperando.\033[m");
         pthread_cond_wait(&condLeitura, &mutex);
     }
-    leit++;
-    pthread_mutex_unlock(&mutex);
-
-    Member(operationNumber % MAX_VALUE, head_p);  /* Ignore return value */
-
-    pthread_mutex_lock(&mutex);
+    leitura += 1;
+    printf("\033[32;1mLeitura habilitada. Leituras ativas: %d\n\033[m", leitura);
 
     pthread_mutex_unlock(&mutex);
 }
 
-void lockEscrita() {
-    /*
-        Se chegar uma nova
-        
-        - Existe operação de leitura -> Tem q esperar acabar
-        - Existe operação de escrita -> Espera acabar e executa assim q essa acabar
-    */
+void finalizarLeitura(void) {
+    pthread_mutex_lock(&mutex);
+
+    leitura -= 1;
+    if(leitura == 0) {
+        puts("\033[36mTodas as leituras finalizadas, sinalizando possibilidade de escrita.\033[m");
+        pthread_cond_signal(&condEscrita);
+    } else {
+        printf("\033[32;1mLeitura finalizada. Leituras ativas: %d\n\033[m", leitura);
+    }
+
+    pthread_mutex_unlock(&mutex);
+}
+
+void habilitarEscrita(void) {
+    pthread_mutex_lock(&mutex);
+
+    escritaAguardando += 1;
+    while((leitura > 0) || (escrita > 0)) {
+        puts("\033[31mEscrita bloqueada, aguardando término de leitura ou outra escrita.\033[m");
+        pthread_cond_wait(&condEscrita, &mutex);
+    }
+    escritaAguardando -= 1;
+    escrita += 1;
+    printf("\033[35;1mEscrita habilitada. Escritas ativas: %d\033[m\n", escrita);
+
+    pthread_mutex_unlock(&mutex);
+}
+
+void finalizarEscrita(void) {
+    pthread_mutex_lock(&mutex);
+
+    escrita -= 1;
+    printf("\033[35;1mEscrita finalizada. Escritas ativas: %d\n\033[m", escrita);
+    pthread_cond_signal(&condEscrita);
+    pthread_cond_broadcast(&condLeitura);
+    puts("\033[36mEscrita finalizada, sinalizando possibilidade de leitura.\033[m");
+
+    pthread_mutex_unlock(&mutex);
 }
