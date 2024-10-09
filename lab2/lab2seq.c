@@ -26,8 +26,8 @@ int main(int argc, char **argv) {
 
     N = atoi(argv[1]);
 
-    vetor1 = generateRandNumberArray(N, "float");
-    vetor2 = generateRandNumberArray(N, "float");
+    vetor1 = generateRandNumberArray(N, "float", 1000);
+    vetor2 = generateRandNumberArray(N, "float", 1000);
 
     for(cont = 0 ; cont < N ; cont += 1) prodVet += vetor1[cont] * vetor2[cont];
 

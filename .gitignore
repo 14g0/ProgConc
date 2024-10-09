@@ -1,6 +1,4 @@
 *.exe
 *.bin
 *.o
-cods-lab3/
-cods-lab4/
-cods-lab5/
+cods-lab*
