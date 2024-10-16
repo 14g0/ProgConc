@@ -34,7 +34,7 @@ void *generateRandNumberArray(int qtt, char* numberType, int fator);
 void initThread(pthread_t *threadLocal, void *threadFunction(void *arg), void* args);
 pthread_t *initThreadArray(int size_arr);
 
-void *mallocMem(size_t size);
+void *allocMem(size_t size, size_t qtt, char *alloc_type, void *oldPointer);
 
 void printMatriz(matriz *matriz);
 

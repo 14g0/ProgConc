@@ -66,15 +66,34 @@ pthread_t *initThreadArray(int size_arr) {
 
 /*----------------------------------------------------------------------------*/
 
-void *mallocMem(size_t size) {
-    void *pointer;
+void *allocMem(size_t size, size_t qtt, char *alloc_type, void *oldPointer) {
+    void *newPointer;
 
-    if((pointer = malloc(size)) == NULL) {
-        puts("\033[31mNão foi possível alocar o espaço de memória\033[m");
-        exit(-45);
+    if(qtt <= 0) {
+        puts("\033[31;1mQuantidade inválida de elementos\033[m");
+        return NULL;
     }
 
-    return pointer;
+    if(strcmp(alloc_type, "malloc")) {
+        if((newPointer = malloc(size * qtt)) == NULL) {
+            puts("\033[31mNão foi possível alocar o espaço de memória\033[m");
+            exit(-45);
+        }
+    }
+    else if(strcmp(alloc_type, "calloc")) {
+        if((newPointer = calloc(qtt, size)) == NULL) {
+            puts("\033[31mNão foi possível alocar o espaço de memória\033[m");
+            exit(-45);
+        }
+    }
+    else if(strcmp(alloc_type, "realloc")) {
+        if((newPointer = realloc(oldPointer, size * qtt)) == NULL) {
+            puts("\033[31mNão foi possível alocar o espaço de memória\033[m");
+            exit(-45);
+        }
+    }
+
+    return newPointer;
 }
 
 /*----------------------------------------------------------------------------*/

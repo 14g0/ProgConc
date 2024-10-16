@@ -7,7 +7,7 @@ arg4 := $(word 4, $(MAKECMDGOALS))
 
 #-------------------------------------------------------------------------------
 
-main: main.c ../util.c
+main: main.c ../utils.c
 	clear
 	gcc -o main.o main.c ../utils.c -ansi -pedantic -Wall
 
