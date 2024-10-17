@@ -67,7 +67,7 @@ void *lerArquivo(void *args) {
         buffer1[charsLidos] = charAtual;
         charsLidos += 1;
 
-        if((charsLidos == ((2 * thread2Cont) + 1)) || (!(charsLidos % 10) && thread2Cont > 9)) {
+        if((charsLidos == ((2 * thread2Cont) + 1)) || (!(charsLidos % 10) && thread2Cont > 10)) {
             sem_post(&semaf2);
             sem_wait(&semaf1);
             charsLidos = 0;
